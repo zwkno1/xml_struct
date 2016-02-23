@@ -2,7 +2,6 @@
 神奇的代码
 自动生成xml与结构体之间的转换的代码
 举个镊子
-
 定义如下的xml：
 <struct name='ReqDeviceInfo' type='struct' def='struct' desc='qing qiu shebei xingxi'>
 <item name='userId' type='base' def='int' desc='yong hu id'></item>
