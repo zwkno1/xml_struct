@@ -168,17 +168,47 @@ void xmlO()
 
 
 // for test
-//#define TEST
+#define TEST
 #ifdef TEST
 #include "test.h"
 void testI()
 {
+    std::string xml = "<RetDeviceInfo>"
+                        "<userId>123</userId>"
+                        "<deviceId>123243</deviceId>"
+                        "<deviceInfos>"
+                            "<Vector>"
+                                "<ReqDeviceInfo>"
+                                    "<userId>7234</userId>"
+                                    "<deviceId>22334</deviceId>"
+                                "</ReqDeviceInfo>"
+                                "<ReqDeviceInfo>"
+                                    "<userId>7234</userId>"
+                                    "<deviceId>22334</deviceId>"
+                                "</ReqDeviceInfo>"
+                            "</Vector>"
+                        "</deviceInfos>"
+                        "<deviceInfos2>"
+                            "<Vector>"
+                                 "<userId>7234</userId>"
+                                 "<userId>7334</userId>"
+                                 "<userId>42324</userId>"
+                            "</Vector>"
+                        "</deviceInfos2>"
+                        "<deviceInfo>"
+                            "<ReqDeviceInfo>"
+                                "<userId>7234</userId>"
+                                "<deviceId>22334</deviceId>"
+                            "</ReqDeviceInfo>"
+                        "</deviceInfo>"
+                        "<time>123243</time>"
+                  "</ReqDeviceInfo>";
 
     rapidxml::xml_document<> doc;
     doc.parse<0>((char *)xml.data());
     auto node = doc.first_node();
     test::RetDeviceInfo info;
-    if(test::xml_get(node, info))
+    if(test::xml_struct(node, info))
         std::cout << "ok" << std::endl;
 
 }
@@ -190,25 +220,27 @@ int main(int argc, char *argv[])
 {
 #ifdef TEST
     testI();
-    xmlO();
 #endif
-    std::string xml("<struct name='ReqDeviceInfo' type='struct' def='struct' desc='qing qiu shebei xingxi'> "
+    std::string xml("<entry name='ReqDeviceInfo' desc='qing qiu shebei xingxi'> "
                     "<item name='userId' type='base' def='int' desc='yong hu id'></item>"
                     "<item name='deviceId' type='base' def='int' desc='she bei id'></item>"
-                    "</struct>"
-                    "<struct name='RetDeviceInfo' type='struct' def='struct' desc='fan hui shebei xingxi'> "
+                    "</entry>"
+                    "<entry name='RetDeviceInfo' desc='fan hui shebei xingxi'> "
                     "<item name='userId' type='base' def='int' desc='yong hu id'></item>"
                     "<item name='deviceId' type='base' def='int' desc='she bei id'></item>"
-                    //"<item name='deviceInfo' type='seq' def='std::vector<ReqDeviceInfo>' base_type='ReqDeviceInfo' desc='she bei zhuang tai'></item>"
+                    "<item name='deviceInfos' type='vector' def='ReqDeviceInfo' desc='she bei zhuang tai'></item>"
+                    "<item name='deviceInfos2' type='vector' def='int' desc='she bei zhuang tai'></item>"
                     "<item name='deviceInfo' type='struct' def='ReqDeviceInfo' desc='she bei zhuang tai'></item>"
-                    "</struct>"
+                    "<item name='time' type='base' def='int' desc='she bei shi jian'></item>"
+                    "</entry>"
                     );
     std::stringstream ss;
     try{
         xmlstruct::parser p(xml);
+        p.parse();
         p.genDef(ss);
-        p.genCodeI(ss);
-        p.genCodeO(ss);
+        p.genCodeXs(ss);
+        p.genCodeSx(ss);
         std::cout << ss.str();
     }
     catch(const std::string & str)
