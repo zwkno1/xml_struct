@@ -1,9 +1,15 @@
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <memory>
+#ifndef XMLSTRUCT_H
+#define XMLSTRUCT_H
+
 #include <rapidxml.h>
+
+#include <vector>
+#include <string>
+#include <ostream>
 #include <cstring>
+
+namespace xmlstruct
+{
 
 class base
 {
@@ -18,13 +24,20 @@ public:
         os << def << "    " << name << ";\n\n";
     }
 
-    virtual void genCode(std::ostream & os)
+    virtual void genCodeI(std::ostream & os)
     {
         os << "if(!node || std::strcmp(node->name(), \"" << name << "\"))\n"
               "return false;\n"
               "if(!xml_get(node, out." << name << "))\n"
               "return false;\n"
               "node = node->next_sibling();\n\n";
+    }
+
+    virtual void genCodeO(std::ostream & os, int parent, int & index)
+    {
+        os << "auto node" << index << " = doc.allocate_node(rapidxml::node_element, \"" << name << "\", doc.allocate_string(getStr(in." << name << ").c_str()));\n"
+              "node" << parent << "->append_node(node" << index << ");\n\n";
+        ++index;
     }
 };
 
@@ -37,7 +50,7 @@ public:
         type = "seq";
     }
 
-    virtual void genCode(std::ostream & os)
+    virtual void genCodeI(std::ostream & os)
     {
         os << "if(!node || std::strcmp(node->name(), \"Sequence\"))\n"
               "return false;\n"
@@ -53,6 +66,19 @@ public:
               "}\n"
               "node = node->next_sibling();\n\n";
     }
+
+    virtual void genCodeO(std::ostream & os, int parent, int & index)
+    {
+        os << "auto node" << index << " = doc.allocate_node(rapidxml::node_element, doc.allocate_string(\"Sequence\"));\n"
+              "node" << parent << ".append_node(node" << index << ");\n"
+              "for(auto & i : in." << name << ")\n{\n"
+              "rapidxml::xml_node<> * tmp = 0;\n"
+              "if(!xml_put(tmp, i))\n"
+              "return false;\n"
+              "node" << index << ".append_node(tmp);\n"
+              "}\n";
+    }
+
 private:
     std::string base_type_;
 };
@@ -82,7 +108,7 @@ public:
         os << "bool xml_put(rapidxml::xml_node<> * &, const " << name << " & );\n\n";
     }
 
-    virtual void genCode(std::ostream & os)
+    virtual void genCodeI(std::ostream & os)
     {
         os << "bool xml_get(const rapidxml::xml_node<> * node, " << name << " & out)\n{\n";
         os << "if(!node || std::strcmp(node->name(), \"" << name << "\")) \n"
@@ -90,12 +116,20 @@ public:
               "node = node->first_node();\n\n";
         for(auto i : children_)
         {
-            i->genCode(os);
+            i->genCodeI(os);
         }
         os << "return true;\n";
         os << "} \n\n";
-        os << "bool xml_put(rapidxml::xml_node<> * & node, const " << name << " & in)\n{\n";
-        os << "} \n\n";
+    }
+
+    virtual void genCodeO(std::ostream & os, int parent, int & index)
+    {
+
+        auto my_index = index++;
+        for(auto i : children_)
+        {
+            i->genCodeO(os, my_index, index);
+        }
     }
 private:
 
@@ -147,7 +181,7 @@ private:
 
     static void getAttr(rapidxml::xml_node<> * node, std::string & type, std::string & def, std::string & name, std::string & desc, std::string & base_type)
     {
-        static const std::vector<std::string> attrNames{ "type", "def", "name", "desc", "base_type"};
+        static const std::vector<std::string> attrNames{"type", "def", "name", "desc", "base_type"};
         for(int i = 0; i < attrNames.size(); ++i)
         {
             auto attr = node->first_attribute(attrNames[i].c_str());
@@ -215,11 +249,25 @@ public:
         }
     }
 
-    void genCode(std::ostream & os)
+    void genCodeI(std::ostream & os)
     {
         for(auto i : elements_)
         {
-            i->genCode(os);
+            i->genCodeI(os);
+        }
+    }
+
+    void genCodeO(std::ostream & os)
+    {
+        for(auto i : elements_)
+        {
+            int index = 0;
+            os << "bool xml_put(rapidxml::xml_node<> * & node, const " << i->name << " & in)\n{\n"
+               << "auto node" << index << " = doc.allocate_node(rapidxml::node_element, doc.allocate_string(" << name <<"));\n\n";
+            i->genCodeO(os, 0, index);
+            os << "node = node0" << ";\n"
+                  "return true;\n"
+                  "} \n\n";
         }
     }
 
@@ -228,116 +276,6 @@ private:
     std::vector<structure *> elements_;
 };
 
-template<typename Dst, typename Src>
-Dst getValue(Src src)
-{
-    Dst ret;
-    std::stringstream ss;
-    ss << src;
-    ss >> ret;
-    if(!ss.eof())
-        throw std::string("cast err");
-    return ret;
-}
+} //namespace xmlstruct
 
-// for test
-#ifdef TEST
-#include "test.h"
-void do_test()
-{
-    std::string xml = "<RetDeviceInfo>"
-                       "<userId>123</userId>"
-                       "<deviceId>123243</deviceId>"
-                       "<Sequence name='deviceInfo'>"
-                            "<ReqDeviceInfo>"
-                            "<userId>7234</userId>"
-                            "<deviceId>22334</deviceId>"
-                            "</ReqDeviceInfo>"
-                            "<ReqDeviceInfo>"
-                            "<userId>6234</userId>"
-                            "<deviceId>22334</deviceId>"
-                            "</ReqDeviceInfo>"
-                            "<ReqDeviceInfo>"
-                            "<userId>5234</userId>"
-                            "<deviceId>22334</deviceId>"
-                            "</ReqDeviceInfo>"
-                            "<ReqDeviceInfo>"
-                            "<userId>4234</userId>"
-                            "<deviceId>22334</deviceId>"
-                            "</ReqDeviceInfo>"
-                       "</Sequence>"
-                       "</ReqDeviceInfo>";
-    rapidxml::xml_document<> doc;
-    doc.parse<0>((char *)xml.data());
-    auto node = doc.first_node();
-    test::RetDeviceInfo info;
-    if(test::xml_get(node, info))
-        std::cout << "ok" << std::endl;
-    //template
-#if 0
-    ReqDeviceInfo ret;
-    rapidxml::xml_document<> doc;
-    doc.parse<0>((char *)xml.data());
-    auto node = doc.first_node();
-    std::cout << node->value() <<std::endl;
-    if(!node || std::strcmp(node->name(), "RetDeviceInfo"))
-        throw std::string("unexpect node: ") + node->name();
-    node = node->first_node();
-
-    if(!node || std::strcmp(node->name(), "userId"))
-        throw std::string("unexpect node: ") + node->name();
-    ret.userId = getValue<int>(node->value());
-    node = node->next_sibling();
-
-    if(!node || std::strcmp(node->name(), "deviceId"))
-        throw std::string("unexpect node: ") + node->name();
-    ret.deviceId = getValue<int>(node->value());
-    node = node->next_sibling();
-
-    if(!node || std::strcmp(node->name(), "Sequence"))
-        throw std::string("unexpect node: ") + node->name();
-    auto attr = node->first_attribute("name");
-    if(!attr || std::strcmp(attr->value(), "deviceInfo"))
-        throw std::string("unexpect node: ") + node->name();
-    for(auto i = node->first_node(); i; i = i->next_sibling())
-    {
-        char a;
-        a = getValue<char>(node->value());
-    }
-    node = node->next_sibling();
-#endif
-
-}
-#endif
-
-
-int main(int argc, char *argv[])
-{
-#ifdef TEST
-    do_test();
-#endif
-    std::string xml("<struct name='ReqDeviceInfo' type='struct' def='struct' desc='qing qiu shebei xingxi'> "
-                    "<item name='userId' type='base' def='int' desc='yong hu id'></item>"
-                    "<item name='deviceId' type='base' def='int' desc='she bei id'></item>"
-                    "</struct>"
-                    "<struct name='RetDeviceInfo' type='struct' def='struct' desc='fan hui shebei xingxi'> "
-                    "<item name='userId' type='base' def='int' desc='yong hu id'></item>"
-                    "<item name='deviceId' type='base' def='int' desc='she bei id'></item>"
-                    "<item name='deviceInfo' type='seq' def='std::vector<ReqDeviceInfo>' base_type='ReqDeviceInfo' desc='she bei zhuang tai'></item>"
-                    "</struct>"
-                    );
-    std::stringstream ss;
-    try{
-        parser p(xml);
-        p.genDef(ss);
-        p.genCode(ss);
-        std::cout << ss.str();
-    }
-    catch(const std::string & str)
-    {
-        std::cout << str << std::endl;
-        return -1;
-    }
-
-    return 0;
-}
+#endif // XMLSTRUCT_H
