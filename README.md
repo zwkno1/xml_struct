@@ -8,4 +8,4 @@ make
 编写xml描述文件,test文件夹下有个示例test.xml
 ./gen test.xml
 生成代码 test.xml.h test.xml.cpp
-
+具体使用方法参考test文件夹下面的示例
