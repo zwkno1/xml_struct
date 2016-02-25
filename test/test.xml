@@ -1,0 +1,15 @@
+
+<root name='test' desc='for test'>
+<entry name='ReqDeviceInfo' desc='qing qiu shebei xingxi'> 
+<item name='userId' type='base' def='int' desc='yong hu id'></item>
+<item name='deviceId' type='base' def='int' desc='she bei id'></item>
+</entry>
+<entry name='RetDeviceInfo' desc='fan hui shebei xingxi'> 
+<item name='userId' type='base' def='int' desc='yong hu id'></item>
+<item name='deviceId' type='base' def='int' desc='she bei id'></item>
+<item name='deviceInfos' type='vector' def='ReqDeviceInfo' desc='she bei zhuang tai'></item>
+<item name='deviceInfos2' type='vector' def='int' desc='she bei zhuang tai'></item>
+<item name='deviceInfo' type='struct' def='ReqDeviceInfo' desc='she bei zhuang tai'></item>
+<item name='time' type='base' def='int' desc='she bei shi jian'></item>
+</entry>
+</root>
