@@ -118,7 +118,7 @@ public:
 
     virtual void genDef(std::ostream & os)
     {
-        trace traceObj(os, trace_, def);
+        trace traceObj(os, name, trace_);
         (void)traceObj;
         os << "// " << desc << "\n";
         os << "::std::vector< " << def << " >    " << name << ";\n";
@@ -131,7 +131,7 @@ public:
         //  but for base type,it must have a name to create a xml node,
         //  so the genCodeSx will generate a defalut name element.
 
-        trace traceObj(os, trace_, def);
+        trace traceObj(os, name, trace_);
         (void)traceObj;
 
         os << "if(!node || std::strcmp(node->name(), \"" << name << "\"))\n"
@@ -153,7 +153,7 @@ public:
 
     virtual void genCodeSx(std::ostream & os)
     {
-        trace traceObj(os, trace_, def);
+        trace traceObj(os, name, trace_);
         (void)traceObj;
 
         os << "{\n"
