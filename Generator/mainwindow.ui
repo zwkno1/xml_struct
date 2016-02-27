@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>662</width>
+    <height>494</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>360</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTreeWidget" name="treeWidget">
+      <column>
+       <property name="text">
+        <string>name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>type</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>def</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>desc</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>662</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Fi&amp;le</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveTo"/>
+    <addaction name="separator"/>
+    <addaction name="actionGenCode"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen">
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionGenCode">
+   <property name="text">
+    <string>&amp;GenCode</string>
+   </property>
+  </action>
+  <action name="actionModify">
+   <property name="text">
+    <string>&amp;Modify</string>
+   </property>
+  </action>
+  <action name="actionRemove">
+   <property name="text">
+    <string>&amp;Remove</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove</string>
+   </property>
+  </action>
+  <action name="actionAdd">
+   <property name="text">
+    <string>&amp;Add</string>
+   </property>
+   <property name="toolTip">
+    <string>Add</string>
+   </property>
+  </action>
+  <action name="actionSaveTo">
+   <property name="text">
+    <string>Sa&amp;veTo</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

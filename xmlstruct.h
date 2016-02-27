@@ -369,13 +369,56 @@ private:
 class parser : public detail::object
 {
 public:
-    parser(const std::string & xml)
+    parser()
         : trace_("@namespace")
+    {
+    }
+
+    void parse(const std::string & xml)
     {
         buf_.resize(xml.size() + 1);
         std::copy(xml.begin(), xml.end(), buf_.begin());
         buf_[buf_.size() - 1] = '\0';
-        parse();
+        parse(buf_.data());
+    }
+
+    void parse(char * data)
+    {
+        rapidxml::xml_document<> doc;
+        try
+        {
+            doc.parse<0>(data);
+        }
+        catch (const rapidxml::parse_error & err)
+        {
+            throw std::string(err.what());
+        }
+
+        auto root = doc.first_node();
+        if(!root || std::strcmp(root->name(), "root"))
+            throw std::string("no root");
+        auto name = root->first_attribute("name");
+        auto desc = root->first_attribute("desc");
+        if(!name || !desc)
+            throw std::string("bad root name or desc");
+        name_ = name->value();
+        desc_ = desc->value();
+
+        for(auto node = root->first_node(); node; node = node->next_sibling())
+        {
+            if(std::strcmp(node->name(), "entry"))
+                throw std::string("expect node name entry");
+
+            detail::entry * e = dynamic_cast<detail::entry *>(detail::object_factory::create(node));
+            entries_.push_back(e);
+            for(auto node1 = node->first_node(); node1; node1 = node1->next_sibling())
+            {
+                if(std::strcmp(node1->name(),"item"))
+                    throw std::string("expect node name item");
+                detail::item * i = dynamic_cast<detail::item *>(detail::object_factory::create(node1));
+                e->append(i);
+            }
+        }
     }
 
     ~parser()
@@ -471,45 +514,6 @@ public:
     }
 
 private:
-    void parse()
-    {
-        rapidxml::xml_document<> doc;
-        try
-        {
-            doc.parse<0>(buf_.data());
-        }
-        catch (const rapidxml::parse_error & err)
-        {
-            throw std::string(err.what());
-        }
-
-        auto root = doc.first_node();
-        if(!root || std::strcmp(root->name(), "root"))
-            throw std::string("no root");
-        auto name = root->first_attribute("name");
-        auto desc = root->first_attribute("desc");
-        if(!name || !desc)
-            throw std::string("bad root name or desc");
-        name_ = name->value();
-        desc_ = desc->value();
-
-        for(auto node = root->first_node(); node; node = node->next_sibling())
-        {
-            if(std::strcmp(node->name(), "entry"))
-                throw std::string("expect node name entry");
-
-            detail::entry * e = dynamic_cast<detail::entry *>(detail::object_factory::create(node));
-            entries_.push_back(e);
-            for(auto node1 = node->first_node(); node1; node1 = node1->next_sibling())
-            {
-                if(std::strcmp(node1->name(),"item"))
-                    throw std::string("expect node name item");
-                detail::item * i = dynamic_cast<detail::item *>(detail::object_factory::create(node1));
-                e->append(i);
-            }
-        }
-    }
-
     void begin_namespace(std::ostream & os)
     {
         if(!name_.empty())
