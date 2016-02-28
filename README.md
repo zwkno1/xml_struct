@@ -9,3 +9,6 @@ make
 ./gen test.xml
 生成代码 test.xml.h test.xml.cpp
 具体使用方法参考test文件夹下面的示例
+
+GUI Daemon
+![Preview](image/preview.png "Preview")
