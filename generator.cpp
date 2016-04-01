@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
 
         try
         {
-            xmlstruct::parser parser(xml);
+            xmlstruct::parser parser;
+			parser.parse(xml);
 
             std::ofstream head(std::string(argv[i]) + ".h");
             std::ofstream source(std::string(argv[i]) + ".cpp");
