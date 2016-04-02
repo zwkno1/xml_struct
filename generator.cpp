@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
 
             std::ofstream head(std::string(argv[i]) + ".h");
             std::ofstream source(std::string(argv[i]) + ".cpp");
-            parser.genNobug(head);
             head << "\n\n";
             head << "#include <rapidxml.h>\n";
             head << "\n";
@@ -43,8 +42,6 @@ int main(int argc, char *argv[])
             parser.genDef(head);
             head.flush();
             head.close();
-
-            parser.genNobug(source);
 
             source << "\n";
             source << "#include \"" << argv[i] << ".h\"\n";

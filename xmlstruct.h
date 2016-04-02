@@ -479,40 +479,6 @@ public:
         end_namespace(os);
     }
 
-    /*
-     * This promise the generator code actually never has any bug
-     */
-    void genNobug(std::ostream & os)
-    {
-        detail::trace traceObj(os, name_, trace_);
-        (void)traceObj;
-        os <<
-        "/*                                                    \n"
-        "                      _ooOoo_                         \n"
-        "                     o8888888o                        \n"
-        "                     88\" . \"88                        \n"
-        "                     (| -_- |)                        \n"
-        "                      O\\ = /O                         \n"
-        "                  ____/`---'\\____                     \n"
-        "                .   ' \\\\| |// `.                      \n"
-        "                 / \\\\||| : |||// \\                    \n"
-        "               / _||||| -:- |||||- \\                  \n"
-        "                 | | \\\\\\ - /// | |                    \n"
-        "               | \\_| ''\\---/'' | |                    \n"
-        "                \\ .-\\__ `-` ___/-. /                  \n"
-        "             ___`. .' /--.--\\ `. . __                 \n"
-        "          ."" '< `.___\\_<|>_/___.' >'"".              \n"
-        "         | | : `- \\`.;`\\ _ /`;.`/ - ` : | |           \n"
-        "           \\ \\ `-. \\_ __\\ /__ _/ .-` / /              \n"
-        "   ======`-.____`-.___\\_____/___.-`____.-'======      \n"
-        "                      `=---='                         \n"
-        "                                                      \n"
-        "   .............................................      \n"
-        "              God bless        No bug                 \n"
-        "                 zwkno1@gmail.com                     \n"
-        "*/                                                    \n";
-    }
-
 private:
     void begin_namespace(std::ostream & os)
     {
