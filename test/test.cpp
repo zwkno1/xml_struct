@@ -18,8 +18,8 @@
 
 #include <iostream>
 #include <sstream>
-#include <rapidxml.h>
-#include <rapidxml_print.h>
+#include <rapidxml.hpp>
+#include <rapidxml_print.hpp>
 
 int main(int argc, char *argv[])
 {
@@ -58,12 +58,12 @@ int main(int argc, char *argv[])
     doc.parse<0>((char *)xml.data());
     auto node = doc.first_node();
     test::RetDeviceInfo info;
-    if(test::xml_struct(node, info))
+    if(xml_struct(node, info))
         std::cout << "xml to struct ok" << std::endl;
 
     rapidxml::xml_document<> doc2;
     rapidxml::xml_node<> *node2 = 0;
-    if(test::struct_xml(node2, info, doc2))
+    if(struct_xml(node2, info, doc2))
         std::cout << "struct to xml ok" << std::endl;
     doc2.append_node(node2);
     std::string strxml;

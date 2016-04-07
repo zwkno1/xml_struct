@@ -1,51 +1,29 @@
-/* @generate [ test:@namespace ] begin @ */
-/*                                                    
-                      _ooOoo_                         
-                     o8888888o                        
-                     88" . "88                        
-                     (| -_- |)                        
-                      O\ = /O                         
-                  ____/`---'\____                     
-                .   ' \\| |// `.                      
-                 / \\||| : |||// \                    
-               / _||||| -:- |||||- \                  
-                 | | \\\ - /// | |                    
-               | \_| ''\---/'' | |                    
-                \ .-\__ `-` ___/-. /                  
-             ___`. .' /--.--\ `. . __                 
-          . '< `.___\_<|>_/___.' >'.              
-         | | : `- \`.;`\ _ /`;.`/ - ` : | |           
-           \ \ `-. \_ __\ /__ _/ .-` / /              
-   ======`-.____`-.___\_____/___.-`____.-'======      
-                      `=---='                         
-                                                      
-   .............................................      
-              God bless        No bug                 
-                 zwkno1@gmail.com                     
-*/                                                    
-/* @generate [ test:@namespace ] end @ */
-
-
-
-#include <rapidxml.h>
+#pragma once
 
 #include <vector>
+#include <string>
+
+#include <rapidxml.hpp>
 
 
 /* @generate [ test:@namespace ] begin @ */
+
 namespace test
 {
-/* @generate [ ReqDeviceInfo:@entry ] begin @ */
+/* @generate [ ReqDeviceInfo:struct ] begin @ */
+
 // qing qiu shebei xingxi
 struct ReqDeviceInfo
 {
 /* @generate [ userId:int ] begin @ */
+
 // yong hu id
 int    userId;
 
 /* @generate [ userId:int ] end @ */
 
 /* @generate [ deviceId:int ] begin @ */
+
 // she bei id
 int    deviceId;
 
@@ -53,43 +31,50 @@ int    deviceId;
 
 };
 
-bool xml_struct(const rapidxml::xml_node<> * , ReqDeviceInfo & );
-bool struct_xml(rapidxml::xml_node<> * &, const ReqDeviceInfo & ,rapidxml::xml_document<> & );
-/* @generate [ ReqDeviceInfo:@entry ] end @ */
+/* @generate [ ReqDeviceInfo:struct ] end @ */
 
-/* @generate [ RetDeviceInfo:@entry ] begin @ */
+/* @generate [ RetDeviceInfo:struct ] begin @ */
+
 // fan hui shebei xingxi
 struct RetDeviceInfo
 {
 /* @generate [ userId:int ] begin @ */
+
 // yong hu id
 int    userId;
 
 /* @generate [ userId:int ] end @ */
 
 /* @generate [ deviceId:int ] begin @ */
+
 // she bei id
 int    deviceId;
 
 /* @generate [ deviceId:int ] end @ */
 
-/* @generate [ std::vector< ReqDeviceInfo >:ReqDeviceInfo ] begin @ */
-// she bei zhuang tai
-::std::vector< ReqDeviceInfo >    deviceInfos;
-/* @generate [ std::vector< ReqDeviceInfo >:ReqDeviceInfo ] end @ */
+/* @generate [ deviceInfos:std::vector< ReqDeviceInfo > ] begin @ */
 
-/* @generate [ std::vector< int >:int ] begin @ */
 // she bei zhuang tai
-::std::vector< int >    deviceInfos2;
-/* @generate [ std::vector< int >:int ] end @ */
+std::vector< ReqDeviceInfo >    deviceInfos;
+
+/* @generate [ deviceInfos:std::vector< ReqDeviceInfo > ] end @ */
+
+/* @generate [ deviceInfos2:std::vector< int > ] begin @ */
+
+// she bei zhuang tai
+std::vector< int >    deviceInfos2;
+
+/* @generate [ deviceInfos2:std::vector< int > ] end @ */
 
 /* @generate [ deviceInfo:ReqDeviceInfo ] begin @ */
+
 // she bei zhuang tai
 ReqDeviceInfo    deviceInfo;
 
 /* @generate [ deviceInfo:ReqDeviceInfo ] end @ */
 
 /* @generate [ time:int ] begin @ */
+
 // she bei shi jian
 int    time;
 
@@ -97,11 +82,15 @@ int    time;
 
 };
 
-bool xml_struct(const rapidxml::xml_node<> * , RetDeviceInfo & );
-bool struct_xml(rapidxml::xml_node<> * &, const RetDeviceInfo & ,rapidxml::xml_document<> & );
-/* @generate [ RetDeviceInfo:@entry ] end @ */
+/* @generate [ RetDeviceInfo:struct ] end @ */
 
 } // namespace test
+
+bool xml_struct(const rapidxml::xml_node<> * , test::ReqDeviceInfo & );
+bool struct_xml(rapidxml::xml_node<> * &, const test::ReqDeviceInfo & ,rapidxml::xml_document<> & );
+
+bool xml_struct(const rapidxml::xml_node<> * , test::RetDeviceInfo & );
+bool struct_xml(rapidxml::xml_node<> * &, const test::RetDeviceInfo & ,rapidxml::xml_document<> & );
 
 /* @generate [ test:@namespace ] end @ */
 

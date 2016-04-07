@@ -1,30 +1,3 @@
-/* @generate [ test:@namespace ] begin @ */
-/*                                                    
-                      _ooOoo_                         
-                     o8888888o                        
-                     88" . "88                        
-                     (| -_- |)                        
-                      O\ = /O                         
-                  ____/`---'\____                     
-                .   ' \\| |// `.                      
-                 / \\||| : |||// \                    
-               / _||||| -:- |||||- \                  
-                 | | \\\ - /// | |                    
-               | \_| ''\---/'' | |                    
-                \ .-\__ `-` ___/-. /                  
-             ___`. .' /--.--\ `. . __                 
-          . '< `.___\_<|>_/___.' >'.              
-         | | : `- \`.;`\ _ /`;.`/ - ` : | |           
-           \ \ `-. \_ __\ /__ _/ .-` / /              
-   ======`-.____`-.___\_____/___.-`____.-'======      
-                      `=---='                         
-                                                      
-   .............................................      
-              God bless        No bug                 
-                 zwkno1@gmail.com                     
-*/                                                    
-/* @generate [ test:@namespace ] end @ */
-
 
 #include "test.xml.h"
 #include <cstring>
@@ -32,7 +5,8 @@
 
 
 /* @generate [ test:@namespace ] begin @ */
-namespace test
+
+namespace 
 {
 
 template<class T>bool xml_struct(const rapidxml::xml_node<> * node, T & out)
@@ -43,12 +17,9 @@ template<class T>bool xml_struct(const rapidxml::xml_node<> * node, T & out)
     return ss.eof();
 }
 
-template<>
-bool xml_struct(const rapidxml::xml_node<> * node, char & out)
+template<>bool xml_struct(const rapidxml::xml_node<> * node, std::string & out)
 {
-    if(std::strlen(node->value()) != 1)
-        return false;
-    out = node->value()[0];
+    out = std::string(node->value()); 
     return true;
 }
 
@@ -63,6 +34,7 @@ bool struct_xml(rapidxml::xml_node<> * & node, const T & in, rapidxml::xml_docum
 }
 
 // for base item
+// char or uchar is treated as interger
 template<class T>
 std::string get_string(const T & in)
 {
@@ -71,18 +43,21 @@ std::string get_string(const T & in)
     return ss.str();
 }
 
-} // namespace test
+} // namespace 
+
+using namespace test;
 
 /* @generate [ test:@namespace ] end @ */
 
 /* @generate [ test:@namespace ] begin @ */
-namespace test
-{
-/* @generate [ ReqDeviceInfo:@entry ] begin @ */
+
+/* @generate [ ReqDeviceInfo:struct ] begin @ */
+
 bool struct_xml(rapidxml::xml_node<> * & node, const ReqDeviceInfo & in, rapidxml::xml_document<> & doc)
 {
 node = doc.allocate_node(rapidxml::node_element, doc.allocate_string("ReqDeviceInfo"));
 /* @generate [ userId:int ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, "userId", doc.allocate_string(get_string(in.userId).c_str()));
 node->append_node(node1);
@@ -90,6 +65,7 @@ node->append_node(node1);
 /* @generate [ userId:int ] end @ */
 
 /* @generate [ deviceId:int ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, "deviceId", doc.allocate_string(get_string(in.deviceId).c_str()));
 node->append_node(node1);
@@ -98,13 +74,16 @@ node->append_node(node1);
 
 return true;
 }
-/* @generate [ ReqDeviceInfo:@entry ] end @ */
 
-/* @generate [ RetDeviceInfo:@entry ] begin @ */
+/* @generate [ ReqDeviceInfo:struct ] end @ */
+
+/* @generate [ RetDeviceInfo:struct ] begin @ */
+
 bool struct_xml(rapidxml::xml_node<> * & node, const RetDeviceInfo & in, rapidxml::xml_document<> & doc)
 {
 node = doc.allocate_node(rapidxml::node_element, doc.allocate_string("RetDeviceInfo"));
 /* @generate [ userId:int ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, "userId", doc.allocate_string(get_string(in.userId).c_str()));
 node->append_node(node1);
@@ -112,45 +91,49 @@ node->append_node(node1);
 /* @generate [ userId:int ] end @ */
 
 /* @generate [ deviceId:int ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, "deviceId", doc.allocate_string(get_string(in.deviceId).c_str()));
 node->append_node(node1);
 }
 /* @generate [ deviceId:int ] end @ */
 
-/* @generate [ std::vector< ReqDeviceInfo >:ReqDeviceInfo ] begin @ */
+/* @generate [ deviceInfos:std::vector< ReqDeviceInfo > ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, doc.allocate_string("deviceInfos"));
 node->append_node(node1);
 auto node2 = doc.allocate_node(rapidxml::node_element, doc.allocate_string("Vector"));
 node1->append_node(node2);
-for(auto & i : in.deviceInfos)
+for(auto i = in.deviceInfos.begin(); i != in.deviceInfos.end(); ++i)
 {
 rapidxml::xml_node<> * tmp = 0;
-if(!struct_xml(tmp, i, doc))
+if(!struct_xml(tmp, *i, doc))
 return false;
 node2->append_node(tmp);
 }
 }
-/* @generate [ std::vector< ReqDeviceInfo >:ReqDeviceInfo ] end @ */
+/* @generate [ deviceInfos:std::vector< ReqDeviceInfo > ] end @ */
 
-/* @generate [ std::vector< int >:int ] begin @ */
+/* @generate [ deviceInfos2:std::vector< int > ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, doc.allocate_string("deviceInfos2"));
 node->append_node(node1);
 auto node2 = doc.allocate_node(rapidxml::node_element, doc.allocate_string("Vector"));
 node1->append_node(node2);
-for(auto & i : in.deviceInfos2)
+for(auto i = in.deviceInfos2.begin(); i != in.deviceInfos2.end(); ++i)
 {
 rapidxml::xml_node<> * tmp = 0;
-if(!struct_xml(tmp, i, doc))
+if(!struct_xml(tmp, *i, doc))
 return false;
 node2->append_node(tmp);
 }
 }
-/* @generate [ std::vector< int >:int ] end @ */
+/* @generate [ deviceInfos2:std::vector< int > ] end @ */
 
 /* @generate [ deviceInfo:ReqDeviceInfo ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, "deviceInfo");
 node->append_node(node1);
@@ -162,6 +145,7 @@ node1->append_node(node2);
 /* @generate [ deviceInfo:ReqDeviceInfo ] end @ */
 
 /* @generate [ time:int ] begin @ */
+
 {
 auto node1 = doc.allocate_node(rapidxml::node_element, "time", doc.allocate_string(get_string(in.time).c_str()));
 node->append_node(node1);
@@ -170,16 +154,15 @@ node->append_node(node1);
 
 return true;
 }
-/* @generate [ RetDeviceInfo:@entry ] end @ */
 
-} // namespace test
+/* @generate [ RetDeviceInfo:struct ] end @ */
 
 /* @generate [ test:@namespace ] end @ */
 
 /* @generate [ test:@namespace ] begin @ */
-namespace test
-{
-/* @generate [ ReqDeviceInfo:@entry ] begin @ */
+
+/* @generate [ ReqDeviceInfo:struct ] begin @ */
+
 bool xml_struct(const rapidxml::xml_node<> * node, ReqDeviceInfo & out)
 {
 if(!node || std::strcmp(node->name(), "ReqDeviceInfo")) 
@@ -187,6 +170,7 @@ return false;
 node = node->first_node();
 
 /* @generate [ userId:int ] begin @ */
+
 if(!node || std::strcmp(node->name(), "userId"))
 return false;
 if(!xml_struct(node, out.userId))
@@ -196,6 +180,7 @@ node = node->next_sibling();
 /* @generate [ userId:int ] end @ */
 
 /* @generate [ deviceId:int ] begin @ */
+
 if(!node || std::strcmp(node->name(), "deviceId"))
 return false;
 if(!xml_struct(node, out.deviceId))
@@ -206,9 +191,11 @@ node = node->next_sibling();
 
 return true;
 } 
-/* @generate [ ReqDeviceInfo:@entry ] end @ */
 
-/* @generate [ RetDeviceInfo:@entry ] begin @ */
+/* @generate [ ReqDeviceInfo:struct ] end @ */
+
+/* @generate [ RetDeviceInfo:struct ] begin @ */
+
 bool xml_struct(const rapidxml::xml_node<> * node, RetDeviceInfo & out)
 {
 if(!node || std::strcmp(node->name(), "RetDeviceInfo")) 
@@ -216,6 +203,7 @@ return false;
 node = node->first_node();
 
 /* @generate [ userId:int ] begin @ */
+
 if(!node || std::strcmp(node->name(), "userId"))
 return false;
 if(!xml_struct(node, out.userId))
@@ -225,6 +213,7 @@ node = node->next_sibling();
 /* @generate [ userId:int ] end @ */
 
 /* @generate [ deviceId:int ] begin @ */
+
 if(!node || std::strcmp(node->name(), "deviceId"))
 return false;
 if(!xml_struct(node, out.deviceId))
@@ -233,7 +222,8 @@ node = node->next_sibling();
 
 /* @generate [ deviceId:int ] end @ */
 
-/* @generate [ std::vector< ReqDeviceInfo >:ReqDeviceInfo ] begin @ */
+/* @generate [ deviceInfos:std::vector< ReqDeviceInfo > ] begin @ */
+
 if(!node || std::strcmp(node->name(), "deviceInfos"))
 return false;
 {
@@ -242,16 +232,17 @@ if(!tmp || std::strcmp(tmp->name(), "Vector"))
 return false;
 for(auto i = tmp->first_node(); i; i = i->next_sibling())
 {
-ReqDeviceInfo tmp;
+std::vector< ReqDeviceInfo >::value_type tmp;
 if(!xml_struct(i, tmp))
 return false;
 out.deviceInfos.push_back(tmp);
 }
 }
 node = node->next_sibling();
-/* @generate [ std::vector< ReqDeviceInfo >:ReqDeviceInfo ] end @ */
+/* @generate [ deviceInfos:std::vector< ReqDeviceInfo > ] end @ */
 
-/* @generate [ std::vector< int >:int ] begin @ */
+/* @generate [ deviceInfos2:std::vector< int > ] begin @ */
+
 if(!node || std::strcmp(node->name(), "deviceInfos2"))
 return false;
 {
@@ -260,16 +251,17 @@ if(!tmp || std::strcmp(tmp->name(), "Vector"))
 return false;
 for(auto i = tmp->first_node(); i; i = i->next_sibling())
 {
-int tmp;
+std::vector< int >::value_type tmp;
 if(!xml_struct(i, tmp))
 return false;
 out.deviceInfos2.push_back(tmp);
 }
 }
 node = node->next_sibling();
-/* @generate [ std::vector< int >:int ] end @ */
+/* @generate [ deviceInfos2:std::vector< int > ] end @ */
 
 /* @generate [ deviceInfo:ReqDeviceInfo ] begin @ */
+
 if(!node || std::strcmp(node->name(), "deviceInfo"))
 return false;
 {
@@ -281,6 +273,7 @@ node = node->next_sibling();
 /* @generate [ deviceInfo:ReqDeviceInfo ] end @ */
 
 /* @generate [ time:int ] begin @ */
+
 if(!node || std::strcmp(node->name(), "time"))
 return false;
 if(!xml_struct(node, out.time))
@@ -291,9 +284,8 @@ node = node->next_sibling();
 
 return true;
 } 
-/* @generate [ RetDeviceInfo:@entry ] end @ */
 
-} // namespace test
+/* @generate [ RetDeviceInfo:struct ] end @ */
 
 /* @generate [ test:@namespace ] end @ */
 

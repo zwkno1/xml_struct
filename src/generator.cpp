@@ -1,8 +1,9 @@
-#include "xmlstruct.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+#include "xmlstruct.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -30,18 +31,18 @@ int main(int argc, char *argv[])
         try
         {
             xmlstruct::parser parser;
-			parser.parse(xml);
+			parser.parse(&xml.front());
 
             std::ofstream head(std::string(argv[i]) + ".h");
             std::ofstream source(std::string(argv[i]) + ".cpp");
-            head << "\n\n";
-            head << "#include <rapidxml.h>\n";
+            head << "#pragma once\n";
             head << "\n";
             head << "#include <vector>\n";
+            head << "#include <string>\n";
+            head << "\n";
+            head << "#include <rapidxml.hpp>\n";
             head << "\n\n";
             parser.genDef(head);
-            head.flush();
-            head.close();
 
             source << "\n";
             source << "#include \"" << argv[i] << ".h\"\n";
@@ -52,13 +53,12 @@ int main(int argc, char *argv[])
             parser.genBaseFunc(source);
             parser.genCodeSx(source);
             parser.genCodeXs(source);
-            source.flush();
-            source.close();
             std::cout << argv[i] << ":  ok..." << std::endl;
         }
-        catch(const std::string & err)
+        catch(const xmlstruct::parse_error& err)
         {
-            std::cout << argv[i] << ":  " << err << std::endl;
+            std::cout << argv[i] << ">> " << err.where() << ":" << err.what() << std::endl;
+
         }
 
     }
